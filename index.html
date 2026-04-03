@@ -1,0 +1,3024 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#07090f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>SplitWise — Smart Bill Splitter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+/* ============================================
+   reset.css — Thorough browser normalization
+   ============================================ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  min-height: 100vh; /* fallback */
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  touch-action: manipulation;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul, ol { list-style: none; }
+details > summary { cursor: pointer; list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+
+/* Remove number input spinners everywhere */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] { -moz-appearance: textfield; }
+
+/* Prevent iOS auto-zoom on focus */
+@supports (-webkit-touch-callout: none) {
+  input, select, textarea { font-size: 16px !important; }
+}
+
+/* Smooth focus for accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent, #d4a24e);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+/* ============================================
+   variables.css — Premium design tokens
+   Luxury dark theme: deep obsidian + warm gold
+   ============================================ */
+
+:root {
+  /* ---- Background layers (darkest → lightest) ---- */
+  --bg-void:          #050709;
+  --bg-base:          #07090f;
+  --bg-raised:        #0d1117;
+  --bg-surface:       #131921;
+  --bg-surface-hover: #182030;
+  --bg-elevated:      #1a2332;
+  --bg-glass:         rgba(19, 25, 33, 0.65);
+
+  /* ---- Gold accent spectrum ---- */
+  --gold-50:          #fef9f0;
+  --gold-100:         #fdf0d5;
+  --gold-200:         #f8dba0;
+  --gold-300:         #f0c97a;
+  --gold-400:         #e8b44e;
+  --gold-500:         #d4a24e;
+  --gold-600:         #b8862f;
+  --gold-700:         #8f6820;
+  --gold-800:         #6b4e18;
+  --gold-glow:        rgba(232, 180, 78, 0.12);
+  --gold-glow-strong: rgba(232, 180, 78, 0.25);
+  --gold-glow-ring:   rgba(232, 180, 78, 0.08);
+
+  /* ---- Text hierarchy ---- */
+  --text-100:         #f2efe8;
+  --text-200:         #d1cdc4;
+  --text-300:         #9ca3af;
+  --text-400:         #6b7280;
+  --text-500:         #4b5563;
+
+  /* ---- Borders ---- */
+  --border-dim:       rgba(255, 255, 255, 0.04);
+  --border-subtle:    rgba(255, 255, 255, 0.07);
+  --border-light:     rgba(255, 255, 255, 0.12);
+  --border-gold:      rgba(212, 162, 78, 0.25);
+  --border-gold-bold: rgba(212, 162, 78, 0.5);
+
+  /* ---- Semantic ---- */
+  --success:          #34d399;
+  --error:            #fb7185;
+  --warning:          #fbbf24;
+
+  /* ---- Typography ---- */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body:    'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:    'JetBrains Mono', 'SF Mono', monospace;
+
+  --text-2xs:  0.6875rem;  /* 11px */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.8125rem;  /* 13px */
+  --text-base: 0.9375rem;  /* 15px */
+  --text-md:   1.0625rem;  /* 17px */
+  --text-lg:   1.25rem;    /* 20px */
+  --text-xl:   1.5rem;     /* 24px */
+  --text-2xl:  1.875rem;   /* 30px */
+  --text-3xl:  2.25rem;    /* 36px */
+
+  /* ---- Spacing ---- */
+  --sp-1: 0.25rem;   /* 4  */
+  --sp-2: 0.5rem;    /* 8  */
+  --sp-3: 0.75rem;   /* 12 */
+  --sp-4: 1rem;      /* 16 */
+  --sp-5: 1.25rem;   /* 20 */
+  --sp-6: 1.5rem;    /* 24 */
+  --sp-8: 2rem;      /* 32 */
+  --sp-10: 2.5rem;   /* 40 */
+  --sp-12: 3rem;     /* 48 */
+
+  /* ---- Radii ---- */
+  --r-sm:   6px;
+  --r-md:   10px;
+  --r-lg:   14px;
+  --r-xl:   20px;
+  --r-2xl:  28px;
+  --r-full: 9999px;
+
+  /* ---- Shadows ---- */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md:   0 4px 12px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.3);
+  --shadow-lg:   0 8px 30px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-xl:   0 16px 50px rgba(0,0,0,0.6);
+  --shadow-glow: 0 0 24px rgba(232, 180, 78, 0.15), 0 0 8px rgba(232, 180, 78, 0.1);
+  --shadow-glow-lg: 0 0 40px rgba(232, 180, 78, 0.2), 0 4px 20px rgba(232, 180, 78, 0.1);
+  --shadow-inner: inset 0 1px 0 rgba(255,255,255,0.03);
+
+  /* ---- Easings ---- */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 350ms;
+  --dur-enter: 500ms;
+
+  /* ---- Layout ---- */
+  --app-max-w: 440px;
+  --header-h:  52px;
+}
+/* ============================================
+   layout.css — App shell, ambient BG, header,
+   step containers, progress, and RTL support.
+   Uses CSS logical properties throughout.
+   ============================================ */
+
+/* ---- Body ---- */
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-base);
+  color: var(--text-100);
+  background: var(--bg-base);
+}
+
+/* ---- Ambient floating background ---- */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.35;
+  will-change: transform;
+}
+
+.ambient-orb--gold {
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, var(--gold-600) 0%, transparent 70%);
+  top: -120px;
+  right: -80px;
+  animation: orbDrift1 20s ease-in-out infinite alternate;
+}
+
+.ambient-orb--blue {
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, #1e3a5f 0%, transparent 70%);
+  bottom: -60px;
+  left: -60px;
+  animation: orbDrift2 25s ease-in-out infinite alternate;
+}
+
+@keyframes orbDrift1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-40px, 60px) scale(1.15); }
+}
+@keyframes orbDrift2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, -40px) scale(1.1); }
+}
+
+/* Noise texture overlay for depth */
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  opacity: 1;
+}
+
+/* ---- App shell ---- */
+.app-shell {
+  position: relative;
+  z-index: 1;
+  max-width: var(--app-max-w);
+  margin-inline: auto;
+  padding: 0 var(--sp-5);
+  padding-bottom: var(--sp-12);
+  min-height: 100dvh;
+}
+
+/* ---- Top bar ---- */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-h);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(7, 9, 15, 0.8);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  margin-inline: calc(-1 * var(--sp-5));
+  padding-inline: var(--sp-5);
+  border-bottom: 1px solid var(--border-dim);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.logo-icon {
+  font-size: var(--text-lg);
+  color: var(--gold-400);
+  line-height: 1;
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: var(--text-md);
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--gold-300), var(--gold-500));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ---- Language toggle ---- */
+.lang-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-full);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-300);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.lang-toggle:hover,
+.lang-toggle:active {
+  background: var(--gold-glow);
+  border-color: var(--border-gold);
+  color: var(--gold-400);
+  transform: scale(1.05);
+}
+
+/* ---- Progress bar ---- */
+.progress-bar {
+  padding: var(--sp-4) 0 var(--sp-2);
+}
+
+.progress-track {
+  height: 2px;
+  background: var(--border-subtle);
+  border-radius: var(--r-full);
+  overflow: hidden;
+  margin-bottom: var(--sp-3);
+}
+
+.progress-fill {
+  height: 100%;
+  width: 25%;
+  background: linear-gradient(90deg, var(--gold-600), var(--gold-400), var(--gold-300));
+  border-radius: var(--r-full);
+  transition: width var(--dur-slow) var(--ease-out);
+  box-shadow: 0 0 8px rgba(232, 180, 78, 0.4);
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+}
+
+.progress-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+}
+
+.dot-num {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-full);
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  color: var(--text-400);
+  transition: all var(--dur-base) var(--ease-out);
+}
+
+.dot-label {
+  font-size: 0.5625rem; /* 9px */
+  color: var(--text-500);
+  letter-spacing: 0.02em;
+  transition: color var(--dur-base);
+}
+
+.progress-dot.active .dot-num {
+  background: var(--gold-500);
+  border-color: var(--gold-400);
+  color: var(--bg-base);
+  box-shadow: var(--shadow-glow);
+}
+.progress-dot.active .dot-label {
+  color: var(--gold-400);
+}
+
+.progress-dot.completed .dot-num {
+  background: var(--bg-elevated);
+  border-color: var(--gold-700);
+  color: var(--gold-500);
+}
+.progress-dot.completed .dot-label {
+  color: var(--text-400);
+}
+
+/* ---- Step sections ---- */
+.step {
+  display: none;
+  padding-top: var(--sp-6);
+}
+.step.active {
+  display: block;
+}
+
+.step-header {
+  margin-bottom: var(--sp-6);
+}
+
+.step-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: var(--sp-1);
+}
+
+.step-desc {
+  color: var(--text-300);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.step-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-top: var(--sp-8);
+}
+
+/* ---- Toast container ---- */
+.toast-container {
+  position: fixed;
+  bottom: var(--sp-6);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  pointer-events: none;
+  width: calc(var(--app-max-w) - var(--sp-10));
+  max-width: calc(100vw - var(--sp-8));
+}
+
+
+/* ============================================
+   RTL SUPPORT — Logical properties handle
+   most cases; explicit overrides only for
+   flex/animation direction.
+   ============================================ */
+
+[dir="rtl"] .app-shell { direction: rtl; }
+
+[dir="rtl"] .progress-fill {
+  background: linear-gradient(270deg, var(--gold-600), var(--gold-400), var(--gold-300));
+}
+
+[dir="rtl"] .manual-add-row  { flex-direction: row-reverse; }
+[dir="rtl"] .receipt-line     { flex-direction: row-reverse; }
+[dir="rtl"] .tip-row          { flex-direction: row-reverse; }
+[dir="rtl"] .item-row         { flex-direction: row-reverse; }
+[dir="rtl"] .item-info        { text-align: right; }
+[dir="rtl"] .floating-total   { flex-direction: row-reverse; }
+[dir="rtl"] .split-result-row { flex-direction: row-reverse; }
+
+/* Flip chevron for RTL */
+[dir="rtl"] .chevron { transform: scaleX(-1); }
+/* ============================================
+   components.css — Premium UI components
+   Glass cards, rich buttons, receipt paper,
+   item rows, tip chips, modal, upload, toast.
+   ============================================ */
+
+/* =========== GLASS CARD =========== */
+.glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md), var(--shadow-inner);
+}
+
+
+/* =========== BUTTONS =========== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-6);
+  border-radius: var(--r-lg);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-base);
+  border: 1px solid transparent;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-base) var(--ease-out),
+    border-color var(--dur-fast);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Primary: gold with glow */
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+  color: var(--bg-base);
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--gold-600), var(--gold-500));
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-primary:disabled {
+  background: var(--bg-elevated);
+  color: var(--text-500);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-glow:not(:disabled) {
+  box-shadow: var(--shadow-glow);
+}
+.btn-glow:not(:disabled):hover {
+  box-shadow: var(--shadow-glow-lg);
+}
+
+/* Ghost: transparent with border */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-300);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-ghost:hover {
+  color: var(--text-100);
+  border-color: var(--border-gold);
+  background: var(--gold-glow-ring);
+}
+
+.btn-small {
+  padding: var(--sp-2) var(--sp-4);
+  font-size: var(--text-sm);
+  border-radius: var(--r-md);
+}
+
+.btn-accent {
+  background: var(--gold-500);
+  color: var(--bg-base);
+  font-weight: 600;
+}
+.btn-accent:hover {
+  background: var(--gold-600);
+}
+
+.btn-modal {
+  flex: 1;
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-md);
+}
+
+
+/* =========== INPUTS =========== */
+
+.input-field {
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  color: var(--text-100);
+  font-size: var(--text-base);
+  transition:
+    border-color var(--dur-fast),
+    box-shadow var(--dur-fast);
+}
+
+.input-field::placeholder {
+  color: var(--text-500);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--gold-600);
+  box-shadow: 0 0 0 3px var(--gold-glow-ring), 0 0 12px var(--gold-glow);
+}
+
+.input-grow { flex: 1; min-width: 0; }
+
+.input-price {
+  width: 96px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.input-tip {
+  width: 64px;
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+
+/* =========== UPLOAD BUTTONS =========== */
+
+.upload-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+.upload-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  padding: var(--sp-8) var(--sp-4);
+  border: 1.5px dashed var(--border-light);
+  border-radius: var(--r-xl);
+  background: var(--gold-glow-ring);
+  cursor: pointer;
+  transition: all var(--dur-base) var(--ease-out);
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.upload-option:hover,
+.upload-option:active {
+  border-color: var(--gold-500);
+  background: var(--gold-glow);
+  transform: scale(0.97);
+}
+
+.upload-option-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-full);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-400);
+  transition: all var(--dur-fast);
+}
+
+.upload-option:active .upload-option-icon {
+  background: var(--gold-glow);
+  border-color: var(--border-gold);
+}
+
+.upload-option-label {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--text-200);
+}
+
+/* Preview */
+.preview-container {
+  position: relative;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  margin-bottom: var(--sp-4);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-md);
+}
+
+.preview-image {
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+}
+
+.btn-remove {
+  position: absolute;
+  top: var(--sp-2);
+  inset-inline-end: var(--sp-2);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-full);
+  background: rgba(7, 9, 15, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-200);
+  transition: all var(--dur-fast);
+}
+.btn-remove:hover {
+  background: var(--error);
+  color: white;
+}
+
+
+/* =========== API KEY SECTION =========== */
+
+.api-key-section {
+  margin-top: var(--sp-6);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: border-color var(--dur-base);
+}
+
+.api-key-section[open] {
+  border-color: var(--border-subtle);
+}
+
+.api-key-section summary {
+  padding: var(--sp-3) var(--sp-4);
+  color: var(--text-400);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  background: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  transition: color var(--dur-fast);
+}
+
+.api-key-section summary:hover { color: var(--text-200); }
+
+.key-icon { font-size: var(--text-sm); }
+
+.chevron {
+  margin-inline-start: auto;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.api-key-section[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.api-key-inner {
+  padding: var(--sp-4);
+  background: var(--bg-raised);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.api-key-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.key-status {
+  font-size: var(--text-xs);
+  color: var(--success);
+}
+
+.api-key-note {
+  font-size: var(--text-2xs);
+  color: var(--text-500);
+  line-height: 1.5;
+}
+
+
+/* =========== ITEM ROWS =========== */
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast),
+    border-color var(--dur-fast),
+    transform var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-fast);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.item-row:hover {
+  background: var(--bg-surface-hover);
+}
+
+.item-row:active {
+  transform: scale(0.985);
+}
+
+/* Selected */
+.item-row.selected {
+  background: var(--gold-glow);
+  border-color: var(--border-gold);
+  box-shadow: 0 0 16px rgba(232, 180, 78, 0.06);
+}
+
+/* Checkbox circle */
+.item-check {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: var(--r-full);
+  border: 1.5px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--dur-fast) var(--ease-spring);
+}
+
+.item-row.selected .item-check {
+  background: var(--gold-500);
+  border-color: var(--gold-400);
+}
+
+.item-check-svg {
+  width: 12px;
+  height: 12px;
+  color: var(--bg-base);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all var(--dur-fast) var(--ease-spring);
+}
+
+.item-row.selected .item-check-svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.split-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--text-2xs);
+  font-family: var(--font-mono);
+  color: var(--gold-400);
+  margin-top: 2px;
+  background: rgba(232, 180, 78, 0.08);
+  padding: 1px 6px;
+  border-radius: var(--r-full);
+}
+
+.item-price {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-200);
+  white-space: nowrap;
+  letter-spacing: -0.02em;
+}
+
+.item-price.split-price {
+  color: var(--gold-400);
+}
+
+/* Delete */
+.item-delete {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-500);
+  opacity: 0;
+  transition: all var(--dur-fast);
+}
+.item-row:hover .item-delete { opacity: 1; }
+.item-delete:hover {
+  color: var(--error);
+  background: rgba(251, 113, 133, 0.1);
+}
+
+/* Manual add row */
+.manual-add-row {
+  display: flex;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+  align-items: stretch;
+}
+
+.btn-add {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  background: var(--gold-500);
+  color: var(--bg-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--dur-fast) var(--ease-spring);
+}
+.btn-add:hover {
+  background: var(--gold-600);
+  transform: scale(1.05);
+}
+.btn-add:active {
+  transform: scale(0.95);
+}
+
+/* Running subtotal */
+.floating-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--r-lg);
+}
+
+.floating-total-label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-300);
+}
+
+.floating-total-amount {
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--gold-400);
+  letter-spacing: -0.02em;
+}
+
+/* Mono helper */
+.mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+
+/* =========== TIP SECTION =========== */
+
+.tip-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-6);
+}
+
+.tip-chip {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 1px;
+  padding: var(--sp-3) var(--sp-1);
+  border-radius: var(--r-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-dim);
+  color: var(--text-300);
+  font-family: var(--font-mono);
+  transition:
+    all var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-spring);
+}
+
+.tip-chip-num {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+.tip-chip-pct {
+  font-size: var(--text-xs);
+  opacity: 0.6;
+}
+
+.tip-chip:hover {
+  border-color: var(--border-gold);
+  color: var(--text-100);
+  background: var(--gold-glow-ring);
+}
+
+.tip-chip:active {
+  transform: scale(0.95);
+}
+
+.tip-chip.active {
+  background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+  border-color: var(--gold-400);
+  color: var(--bg-base);
+  box-shadow: var(--shadow-glow);
+}
+.tip-chip.active .tip-chip-pct { opacity: 0.7; }
+
+.custom-tip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-6);
+  color: var(--text-400);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.custom-tip-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.tip-suffix {
+  color: var(--text-500);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+/* Tip preview card */
+.tip-card {
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.tip-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-sm);
+  color: var(--text-300);
+}
+
+.tip-divider {
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.tip-row--total {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--gold-400);
+  padding-top: var(--sp-1);
+}
+
+
+/* =========== RECEIPT =========== */
+
+.receipt {
+  position: relative;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+/* Top notch */
+.receipt-notch {
+  width: 48px;
+  height: 6px;
+  background: var(--bg-base);
+  border-radius: 0 0 6px 6px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.receipt-inner {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-xl);
+  padding: var(--sp-6) var(--sp-5);
+  box-shadow: var(--shadow-lg), var(--shadow-inner);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle gradient wash across receipt */
+.receipt-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(180deg, var(--gold-glow-ring), transparent);
+  pointer-events: none;
+}
+
+.receipt-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-1);
+  position: relative;
+}
+
+.receipt-brand-icon {
+  color: var(--gold-400);
+  font-size: var(--text-md);
+}
+
+.receipt-brand-name {
+  font-weight: 700;
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-300);
+}
+
+.receipt-label {
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--text-400);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-2);
+  position: relative;
+}
+
+/* Dashed tear line */
+.receipt-tear {
+  border-bottom: 1px dashed var(--border-light);
+  margin: var(--sp-3) 0;
+}
+.receipt-tear--thick {
+  border-bottom-width: 2px;
+  border-color: var(--border-gold);
+  margin: var(--sp-4) 0;
+}
+
+.receipt-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-1) 0;
+  position: relative;
+}
+
+.receipt-item-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+  color: var(--text-300);
+  line-height: 1.4;
+}
+
+.receipt-item-name {
+  flex: 1;
+  padding-inline-end: var(--sp-4);
+}
+
+.receipt-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+  color: var(--text-300);
+  padding: var(--sp-1) 0;
+  position: relative;
+}
+
+.receipt-line--total {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  color: var(--gold-400);
+  padding: var(--sp-3) 0;
+  letter-spacing: -0.03em;
+}
+
+.receipt-line--meta {
+  font-size: var(--text-xs);
+  color: var(--text-500);
+  margin-top: var(--sp-1);
+}
+
+/* Zigzag bottom edge */
+.receipt-zigzag {
+  height: 12px;
+  background:
+    linear-gradient(135deg, var(--bg-base) 33.33%, transparent 33.33%) 0 0,
+    linear-gradient(225deg, var(--bg-base) 33.33%, transparent 33.33%) 0 0;
+  background-size: 12px 12px;
+  background-color: var(--bg-surface);
+  border-inline: 1px solid var(--border-subtle);
+  margin-top: -1px;
+}
+
+
+/* =========== SCANNING OVERLAY =========== */
+
+.scanning-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 7, 9, 0.92);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  gap: var(--sp-6);
+}
+
+.scanner-box {
+  width: 140px;
+  height: 140px;
+  position: relative;
+}
+
+/* Scanner corner brackets */
+.scanner-corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: var(--gold-400);
+  border-style: solid;
+  border-width: 0;
+}
+.scanner-corner--tl { top: 0; left: 0; border-top-width: 2.5px; border-left-width: 2.5px; border-radius: 4px 0 0 0; }
+.scanner-corner--tr { top: 0; right: 0; border-top-width: 2.5px; border-right-width: 2.5px; border-radius: 0 4px 0 0; }
+.scanner-corner--bl { bottom: 0; left: 0; border-bottom-width: 2.5px; border-left-width: 2.5px; border-radius: 0 0 0 4px; }
+.scanner-corner--br { bottom: 0; right: 0; border-bottom-width: 2.5px; border-right-width: 2.5px; border-radius: 0 0 4px 0; }
+
+.scanner-beam {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-400), transparent);
+  box-shadow: 0 0 16px var(--gold-400);
+  animation: scanBeam 2s ease-in-out infinite;
+}
+
+.scanning-text {
+  color: var(--text-200);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.scanning-dots {
+  display: flex;
+  gap: 6px;
+}
+.scanning-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-500);
+  animation: dotBounce 1.2s ease-in-out infinite;
+}
+.scanning-dots span:nth-child(2) { animation-delay: 0.15s; }
+.scanning-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+
+/* =========== MODAL =========== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 7, 9, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--sp-5);
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 340px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-5) var(--sp-5) var(--sp-3);
+}
+
+.modal-header h3 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-400);
+  transition: all var(--dur-fast);
+}
+.modal-close:hover {
+  color: var(--text-100);
+  background: var(--bg-elevated);
+}
+
+.modal-body {
+  padding: 0 var(--sp-5) var(--sp-5);
+  text-align: center;
+}
+
+.modal-item-name {
+  font-size: var(--text-md);
+  font-weight: 600;
+  margin-bottom: var(--sp-1);
+}
+
+.modal-item-price {
+  font-family: var(--font-mono);
+  color: var(--text-400);
+  font-size: var(--text-sm);
+  margin-bottom: var(--sp-6);
+}
+
+/* Stepper */
+.split-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-5);
+}
+
+.stepper-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-full);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-200);
+  transition: all var(--dur-fast) var(--ease-spring);
+}
+.stepper-btn:hover {
+  border-color: var(--border-gold);
+  background: var(--gold-glow);
+  color: var(--gold-400);
+  transform: scale(1.1);
+}
+.stepper-btn:active {
+  transform: scale(0.95);
+}
+
+.stepper-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stepper-num {
+  font-family: var(--font-mono);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--gold-400);
+  line-height: 1;
+}
+
+.stepper-label {
+  font-size: var(--text-2xs);
+  color: var(--text-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.split-result-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-2);
+  font-size: var(--text-sm);
+  color: var(--text-400);
+  margin-bottom: var(--sp-2);
+}
+
+.split-result-price {
+  color: var(--gold-400);
+  font-weight: 600;
+}
+
+.modal-footer {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5) var(--sp-5);
+  border-top: 1px solid var(--border-dim);
+}
+
+
+/* =========== TOAST =========== */
+
+.toast {
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-lg);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  pointer-events: auto;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  backdrop-filter: blur(12px);
+}
+
+.toast.success {
+  background: rgba(52, 211, 153, 0.9);
+  color: var(--bg-base);
+}
+.toast.error {
+  background: rgba(251, 113, 133, 0.9);
+  color: var(--bg-base);
+}
+.toast.info {
+  background: var(--bg-glass);
+  color: var(--text-100);
+  border: 1px solid var(--border-subtle);
+}
+
+
+/* =========== UTILITIES =========== */
+
+.hidden { display: none !important; }
+/* ============================================
+   animations.css — Transitions & keyframes
+   Staggered step entrances, scanner animation,
+   micro-interactions, toast system.
+   ============================================ */
+
+/* ---- Step entrance (staggered children) ---- */
+@keyframes stepFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step.active {
+  animation: stepFadeUp var(--dur-enter) var(--ease-out);
+}
+
+/* Stagger immediate children for a cascading reveal */
+.step.active > .step-header   { animation: stepFadeUp var(--dur-enter) var(--ease-out) 0ms both; }
+.step.active > .upload-buttons,
+.step.active > .preview-container,
+.step.active > .items-list,
+.step.active > .tip-grid,
+.step.active > .receipt        { animation: stepFadeUp var(--dur-enter) var(--ease-out) 80ms both; }
+.step.active > .api-key-section,
+.step.active > .manual-add-row,
+.step.active > .custom-tip-row,
+.step.active > .glass-card     { animation: stepFadeUp var(--dur-enter) var(--ease-out) 140ms both; }
+.step.active > .floating-total { animation: stepFadeUp var(--dur-enter) var(--ease-out) 180ms both; }
+.step.active > .step-actions   { animation: stepFadeUp var(--dur-enter) var(--ease-out) 220ms both; }
+
+
+/* ---- Item row entrance ---- */
+@keyframes itemIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.item-row {
+  animation: itemIn var(--dur-slow) var(--ease-out) backwards;
+}
+
+/* RTL: same animation works since it's Y-axis */
+
+/* ---- Check pop ---- */
+@keyframes checkPop {
+  0%   { transform: scale(0.6); }
+  60%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.item-row.selected .item-check {
+  animation: checkPop var(--dur-base) var(--ease-spring);
+}
+
+
+/* ---- Scanner beam ---- */
+@keyframes scanBeam {
+  0%, 100% { top: 12px; opacity: 0.4; }
+  50%      { top: calc(100% - 14px); opacity: 1; }
+}
+
+
+/* ---- Dot bounce (scanning dots) ---- */
+@keyframes dotBounce {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.3;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+
+/* ---- Modal ---- */
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-overlay:not(.hidden) {
+  animation: overlayIn var(--dur-base) var(--ease-out);
+}
+.modal-overlay:not(.hidden) .modal-card {
+  animation: cardIn var(--dur-slow) var(--ease-spring);
+}
+
+
+/* ---- Receipt total reveal ---- */
+@keyframes totalPulse {
+  0%   { opacity: 0; transform: scale(0.85); }
+  60%  { transform: scale(1.03); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.receipt-line--total .mono {
+  animation: totalPulse var(--dur-enter) var(--ease-spring);
+}
+
+
+/* ---- Toast ---- */
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+}
+
+.toast {
+  animation: toastSlideIn var(--dur-base) var(--ease-out);
+}
+.toast.exiting {
+  animation: toastSlideOut var(--dur-fast) var(--ease-smooth) forwards;
+}
+
+
+/* ---- Upload area pulse on drag ---- */
+@keyframes uploadBreath {
+  0%, 100% { border-color: var(--gold-600); }
+  50%      { border-color: var(--gold-300); }
+}
+
+
+
+
+/* ---- Subtle hover scale for interactive cards ---- */
+.glass-card {
+  transition:
+    border-color var(--dur-fast),
+    box-shadow var(--dur-base),
+    transform var(--dur-fast) var(--ease-spring);
+}
+
+
+/* ---- Receipt entrance ---- */
+@keyframes receiptReveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.step.active .receipt {
+  animation: receiptReveal 0.6s var(--ease-out) 100ms both;
+}
+
+/* ---- Receipt item stagger ---- */
+@keyframes receiptItemIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.receipt-item-row {
+  animation: receiptItemIn var(--dur-slow) var(--ease-out) backwards;
+}
+  </style>
+</head>
+
+  <!-- Ambient background effects -->
+  <div class="ambient-bg">
+    <div class="ambient-orb ambient-orb--gold"></div>
+    <div class="ambient-orb ambient-orb--blue"></div>
+    <div class="noise-overlay"></div>
+  </div>
+
+  <!-- ===== APP SHELL ===== -->
+  <div id="app" class="app-shell">
+
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="logo">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text" data-i18n="appName"></span>
+      </div>
+      <button id="langToggle" class="lang-toggle" aria-label="Switch language">
+        <span class="lang-label">עב</span>
+      </button>
+    </header>
+
+    <!-- Progress -->
+    <nav class="progress-bar" aria-label="Steps">
+      <div class="progress-track">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <div class="progress-steps">
+        <button class="progress-dot active" data-step="1" aria-label="Step 1">
+          <span class="dot-num">1</span>
+          <span class="dot-label" data-i18n="stepLabel1"></span>
+        </button>
+        <button class="progress-dot" data-step="2" aria-label="Step 2">
+          <span class="dot-num">2</span>
+          <span class="dot-label" data-i18n="stepLabel2"></span>
+        </button>
+        <button class="progress-dot" data-step="3" aria-label="Step 3">
+          <span class="dot-num">3</span>
+          <span class="dot-label" data-i18n="stepLabel3"></span>
+        </button>
+        <button class="progress-dot" data-step="4" aria-label="Step 4">
+          <span class="dot-num">4</span>
+          <span class="dot-label" data-i18n="stepLabel4"></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ===== STEP 1: Upload ===== -->
+    <section id="step1" class="step active" data-step="1">
+      <div class="step-header">
+        <h2 class="step-title" data-i18n="step1Title"></h2>
+        <p class="step-desc" data-i18n="step1Desc"></p>
+      </div>
+
+      <div class="upload-buttons">
+        <button id="cameraBtn" class="upload-option">
+          <div class="upload-option-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="14" rx="2"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="12" cy="12" r="1.5"/>
+              <circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+          <span class="upload-option-label" data-i18n="takePhoto"></span>
+        </button>
+        <button id="galleryBtn" class="upload-option">
+          <div class="upload-option-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </div>
+          <span class="upload-option-label" data-i18n="fromGallery"></span>
+        </button>
+      </div>
+      <!-- Camera input: forces camera on mobile -->
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden />
+      <!-- Gallery input: opens photo picker (no capture = gallery option) -->
+      <input type="file" id="galleryInput" accept="image/*" hidden />
+
+      <!-- Image preview -->
+      <div id="previewContainer" class="preview-container hidden">
+        <img id="previewImage" class="preview-image" alt="Bill preview" />
+        <button id="removeImage" class="btn-remove" aria-label="Remove image">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- API key -->
+      <details class="api-key-section">
+        <summary>
+          <span class="key-icon">🔐</span>
+          <span data-i18n="apiKeyLabel"></span>
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="api-key-inner">
+          <input type="password" id="apiKeyInput" class="input-field" placeholder="sk-ant-..." autocomplete="off" spellcheck="false" />
+          <div class="api-key-actions">
+            <button id="saveApiKey" class="btn btn-small btn-accent" data-i18n="saveKey"></button>
+            <span id="keyStatus" class="key-status"></span>
+          </div>
+          <p class="api-key-note" data-i18n="apiKeyNote"></p>
+        </div>
+      </details>
+
+      <!-- Actions -->
+      <div class="step-actions">
+        <button id="scanBtn" class="btn btn-primary btn-glow" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+          <span data-i18n="scanBill"></span>
+        </button>
+        <button id="manualEntryBtn" class="btn btn-ghost">
+          <span data-i18n="manualEntry"></span>
+        </button>
+      </div>
+
+      <!-- Scanning overlay -->
+      <div id="scanningOverlay" class="scanning-overlay hidden">
+        <div class="scanner-box">
+          <div class="scanner-corner scanner-corner--tl"></div>
+          <div class="scanner-corner scanner-corner--tr"></div>
+          <div class="scanner-corner scanner-corner--bl"></div>
+          <div class="scanner-corner scanner-corner--br"></div>
+          <div class="scanner-beam"></div>
+        </div>
+        <p class="scanning-text" data-i18n="scanning"></p>
+        <div class="scanning-dots"><span></span><span></span><span></span></div>
+      </div>
+    </section>
+
+    <!-- ===== STEP 2: Select Items ===== -->
+    <section id="step2" class="step" data-step="2">
+      <div class="step-header">
+        <h2 class="step-title" data-i18n="step2Title"></h2>
+        <p class="step-desc" data-i18n="step2Desc"></p>
+      </div>
+
+      <div id="itemsList" class="items-list"></div>
+
+      <!-- Manual add -->
+      <div class="manual-add-row">
+        <input type="text" id="manualName" class="input-field input-grow" data-i18n-placeholder="itemNamePlaceholder" />
+        <input type="number" id="manualPrice" class="input-field input-price" data-i18n-placeholder="pricePlaceholder" step="0.01" min="0" inputmode="decimal" />
+        <button id="addItemBtn" class="btn-add" aria-label="Add item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+
+      <!-- Running total -->
+      <div class="floating-total">
+        <span class="floating-total-label" data-i18n="yourSubtotal"></span>
+        <span id="runningSubtotal" class="floating-total-amount">₪0.00</span>
+      </div>
+
+      <div class="step-actions">
+        <button id="toStep3" class="btn btn-primary btn-glow" data-i18n="continue"></button>
+        <button class="btn btn-ghost btn-back" data-go-step="1" data-i18n="back"></button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 3: Tip ===== -->
+    <section id="step3" class="step" data-step="3">
+      <div class="step-header">
+        <h2 class="step-title" data-i18n="step3Title"></h2>
+        <p class="step-desc" data-i18n="step3Desc"></p>
+      </div>
+
+      <div class="tip-grid">
+        <button class="tip-chip" data-tip="10"><span class="tip-chip-num">10</span><span class="tip-chip-pct">%</span></button>
+        <button class="tip-chip" data-tip="15"><span class="tip-chip-num">15</span><span class="tip-chip-pct">%</span></button>
+        <button class="tip-chip active" data-tip="18"><span class="tip-chip-num">18</span><span class="tip-chip-pct">%</span></button>
+        <button class="tip-chip" data-tip="20"><span class="tip-chip-num">20</span><span class="tip-chip-pct">%</span></button>
+        <button class="tip-chip" data-tip="25"><span class="tip-chip-num">25</span><span class="tip-chip-pct">%</span></button>
+      </div>
+
+      <div class="custom-tip-row">
+        <label data-i18n="customTip"></label>
+        <div class="custom-tip-wrap">
+          <input type="number" id="customTipInput" class="input-field input-tip" min="0" max="100" step="1" inputmode="numeric" />
+          <span class="tip-suffix">%</span>
+        </div>
+      </div>
+
+      <!-- Tip breakdown card -->
+      <div class="glass-card tip-card">
+        <div class="tip-row">
+          <span data-i18n="yourItems"></span>
+          <span id="tipPreviewSubtotal" class="mono">₪0.00</span>
+        </div>
+        <div class="tip-row">
+          <span data-i18n="tipAmount"></span>
+          <span id="tipPreviewTip" class="mono">₪0.00</span>
+        </div>
+        <div class="tip-divider"></div>
+        <div class="tip-row tip-row--total">
+          <span data-i18n="youPay"></span>
+          <span id="tipPreviewTotal" class="mono">₪0.00</span>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button id="toStep4" class="btn btn-primary btn-glow" data-i18n="seeSummary"></button>
+        <button class="btn btn-ghost btn-back" data-go-step="2" data-i18n="back"></button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 4: Summary ===== -->
+    <section id="step4" class="step" data-step="4">
+      <div class="step-header">
+        <h2 class="step-title" data-i18n="step4Title"></h2>
+      </div>
+
+      <!-- Receipt -->
+      <div class="receipt">
+        <div class="receipt-notch"></div>
+        <div class="receipt-inner">
+          <div class="receipt-brand">
+            <span class="receipt-brand-icon">◈</span>
+            <span class="receipt-brand-name">SplitWise</span>
+          </div>
+          <div class="receipt-label" data-i18n="receiptTitle"></div>
+          <div class="receipt-tear"></div>
+
+          <div id="summaryItems" class="receipt-items"></div>
+
+          <div class="receipt-tear"></div>
+          <div class="receipt-line">
+            <span data-i18n="subtotal"></span>
+            <span id="summarySubtotal" class="mono"></span>
+          </div>
+          <div class="receipt-line">
+            <span id="summaryTipLabel"></span>
+            <span id="summaryTip" class="mono"></span>
+          </div>
+          <div class="receipt-tear receipt-tear--thick"></div>
+          <div class="receipt-line receipt-line--total">
+            <span data-i18n="totalToPay"></span>
+            <span id="summaryTotal" class="mono"></span>
+          </div>
+          <div class="receipt-tear"></div>
+          <div class="receipt-line receipt-line--meta">
+            <span data-i18n="billPercent"></span>
+            <span id="summaryPercent" class="mono"></span>
+          </div>
+        </div>
+        <div class="receipt-zigzag"></div>
+      </div>
+
+      <div class="step-actions">
+        <button id="startOver" class="btn btn-primary btn-glow" data-i18n="startOver"></button>
+      </div>
+    </section>
+
+    <!-- ===== Split Modal ===== -->
+    <div id="splitModal" class="modal-overlay hidden">
+      <div class="modal-card glass-card">
+        <div class="modal-header">
+          <h3 data-i18n="splitTitle"></h3>
+          <button id="splitClose" class="modal-close" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-item-name" id="splitItemName"></p>
+          <p class="modal-item-price" id="splitItemPrice"></p>
+          <div class="split-stepper">
+            <button id="splitMinus" class="stepper-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+            <div class="stepper-value">
+              <span id="splitCount" class="stepper-num">2</span>
+              <span class="stepper-label" data-i18n="people"></span>
+            </div>
+            <button id="splitPlus" class="stepper-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+          <div class="split-result-row">
+            <span data-i18n="youPayPerPerson"></span>
+            <span id="splitResult" class="mono split-result-price">₪0.00</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="splitCancel" class="btn btn-ghost btn-modal" data-i18n="cancel"></button>
+          <button id="splitConfirm" class="btn btn-primary btn-modal" data-i18n="confirm"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toastContainer" class="toast-container"></div>
+  </div>
+
+  <!-- Scripts -->
+
+<script>
+/* ============================================
+   i18n.js — Internationalization
+   Complete English + Hebrew translation system.
+   Every user-visible string lives here.
+   ============================================ */
+
+const I18N = {
+  en: {
+    appName: "SplitWise",
+    // Progress step labels
+    stepLabel1: "Scan",
+    stepLabel2: "Items",
+    stepLabel3: "Tip",
+    stepLabel4: "Done",
+    // Step 1 — Upload
+    step1Title: "Scan Your Bill",
+    step1Desc: "Take a photo of the receipt or upload from your gallery. AI reads it instantly.",
+    takePhoto: "Take Photo",
+    fromGallery: "From Gallery",
+    apiKeyLabel: "API Key Settings",
+    saveKey: "Save",
+    apiKeyNote: "Stored locally on your device. Only sent to the Anthropic API to read your bill.",
+    scanBill: "Scan Bill with AI",
+    manualEntry: "Or add items manually",
+    scanning: "Reading your bill",
+    // Step 2 — Items
+    step2Title: "Pick Your Items",
+    step2Desc: "Tap the items you ordered. Tap a selected item again to split it with someone.",
+    itemNamePlaceholder: "Item name",
+    pricePlaceholder: "Price",
+    addItem: "Add",
+    yourSubtotal: "Your subtotal",
+    continue: "Continue",
+    back: "Back",
+    // Step 3 — Tip
+    step3Title: "Leave a Tip",
+    step3Desc: "Tip is calculated only on your share — not the whole bill.",
+    customTip: "Custom",
+    yourItems: "Your items",
+    tipAmount: "Tip",
+    youPay: "You pay",
+    seeSummary: "See Summary",
+    // Step 4 — Summary
+    step4Title: "Your Share",
+    receiptTitle: "YOUR RECEIPT",
+    subtotal: "Subtotal",
+    tipLabel: "Tip ({pct}%)",
+    totalToPay: "Total to Pay",
+    billPercent: "Share of full bill",
+    startOver: "Start Over",
+    // Split modal
+    splitTitle: "Split This Item",
+    people: "people",
+    youPayPerPerson: "Your share:",
+    confirm: "Confirm",
+    cancel: "Cancel",
+    // Toasts & errors
+    errorApiKey: "Please add your API key first.",
+    errorNoImage: "Please upload a bill image first.",
+    errorScanFailed: "Couldn't read the bill. Try again or add items manually.",
+    errorParseFailed: "Couldn't parse the bill. Try adding items manually.",
+    errorNetwork: "Connection failed. Check your internet and try again.",
+    errorInvalidKey: "Invalid API key. Check your key in the settings.",
+    errorForbidden: "API key doesn't have permission. Check your Anthropic account.",
+    errorRateLimit: "Too many requests. Wait a moment and try again.",
+    errorEmptyBill: "No items found. Try a clearer photo, or add items manually below.",
+    scanSuccess: "Found {count} items!",
+    keySaved: "API key saved ✓",
+    noItemsSelected: "Select at least one item to continue.",
+    itemAdded: "Item added",
+    splitBy: "÷ {n}",
+  },
+
+  he: {
+    appName: "SplitWise",
+    stepLabel1: "סריקה",
+    stepLabel2: "פריטים",
+    stepLabel3: "טיפ",
+    stepLabel4: "סיום",
+    step1Title: "סרקו את החשבון",
+    step1Desc: "צלמו את הקבלה או העלו מהגלריה. הבינה המלאכותית תקרא אותה מיד.",
+    takePhoto: "צלמו תמונה",
+    fromGallery: "מהגלריה",
+    apiKeyLabel: "הגדרות מפתח API",
+    saveKey: "שמור",
+    apiKeyNote: "נשמר מקומית על המכשיר שלכם. נשלח רק ל-API של Anthropic לקריאת החשבון.",
+    scanBill: "סרקו חשבון עם AI",
+    manualEntry: "או הוסיפו פריטים ידנית",
+    scanning: "קוראים את החשבון",
+    step2Title: "בחרו את הפריטים שלכם",
+    step2Desc: "הקישו על פריטים שהזמנתם. הקישו שוב על פריט נבחר כדי לפצל אותו.",
+    itemNamePlaceholder: "שם הפריט",
+    pricePlaceholder: "מחיר",
+    addItem: "הוסף",
+    yourSubtotal: "הסכום שלכם",
+    continue: "המשך",
+    back: "חזרה",
+    step3Title: "השאירו טיפ",
+    step3Desc: "הטיפ מחושב רק על החלק שלכם — לא על כל החשבון.",
+    customTip: "מותאם",
+    yourItems: "הפריטים שלכם",
+    tipAmount: "טיפ",
+    youPay: "אתם משלמים",
+    seeSummary: "לסיכום",
+    step4Title: "החלק שלכם",
+    receiptTitle: "הקבלה שלכם",
+    subtotal: "סכום ביניים",
+    tipLabel: "({pct}%) טיפ",
+    totalToPay: "סה״כ לתשלום",
+    billPercent: "החלק שלכם מהחשבון",
+    startOver: "התחלה מחדש",
+    splitTitle: "פצלו פריט זה",
+    people: "אנשים",
+    youPayPerPerson: "החלק שלכם:",
+    confirm: "אישור",
+    cancel: "ביטול",
+    errorApiKey: "אנא הוסיפו מפתח API קודם.",
+    errorNoImage: "אנא העלו תמונת חשבון קודם.",
+    errorScanFailed: "לא הצלחנו לקרוא את החשבון. נסו שוב או הוסיפו ידנית.",
+    errorParseFailed: "לא הצלחנו לפענח את החשבון. נסו להוסיף ידנית.",
+    errorNetwork: "בעיית חיבור. בדקו את האינטרנט ונסו שוב.",
+    errorInvalidKey: "מפתח API לא תקין. בדקו את המפתח בהגדרות.",
+    errorForbidden: "אין הרשאה למפתח ה-API. בדקו את חשבון Anthropic.",
+    errorRateLimit: "יותר מדי בקשות. חכו רגע ונסו שוב.",
+    errorEmptyBill: "לא נמצאו פריטים. נסו תמונה ברורה יותר, או הוסיפו ידנית למטה.",
+    scanSuccess: "נמצאו {count} פריטים!",
+    keySaved: "מפתח API נשמר ✓",
+    noItemsSelected: "בחרו לפחות פריט אחד כדי להמשיך.",
+    itemAdded: "פריט נוסף",
+    splitBy: "{n} ÷",
+  },
+};
+
+/* ---- Language state ---- */
+let currentLang = localStorage.getItem("splitwise-lang") || "en";
+
+/**
+ * Get a translated string. Supports {placeholder} replacement.
+ * Example: t("tipLabel", { pct: 18 }) → "Tip (18%)"
+ */
+function t(key, replacements = {}) {
+  let text = I18N[currentLang]?.[key] || I18N.en[key] || key;
+  for (const [k, v] of Object.entries(replacements)) {
+    text = text.replace(`{${k}}`, v);
+  }
+  return text;
+}
+
+/**
+ * Apply translations to all elements with data-i18n / data-i18n-placeholder.
+ */
+function applyTranslations() {
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    el.textContent = t(el.getAttribute("data-i18n"));
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    el.placeholder = t(el.getAttribute("data-i18n-placeholder"));
+  });
+}
+
+/**
+ * Toggle between English and Hebrew.
+ * Updates dir, lang, and re-renders everything.
+ */
+function switchLanguage() {
+  currentLang = currentLang === "en" ? "he" : "en";
+  localStorage.setItem("splitwise-lang", currentLang);
+
+  const html = document.documentElement;
+  html.lang = currentLang;
+  html.dir = currentLang === "he" ? "rtl" : "ltr";
+
+  // Toggle label shows the OTHER language
+  document.querySelector(".lang-label").textContent =
+    currentLang === "en" ? "עב" : "EN";
+
+  applyTranslations();
+
+  // Re-render dynamic content
+  if (typeof renderItems === "function") renderItems();
+  if (typeof updateTipPreview === "function") updateTipPreview();
+}
+
+/**
+ * Initialize language on page load.
+ */
+function initI18n() {
+  const html = document.documentElement;
+  html.lang = currentLang;
+  html.dir = currentLang === "he" ? "rtl" : "ltr";
+
+  document.querySelector(".lang-label").textContent =
+    currentLang === "en" ? "עב" : "EN";
+
+  applyTranslations();
+}
+
+/* ============================================
+   api.js — Anthropic Claude API communication
+   Sends bill photos to Claude Vision and
+   parses extracted items. Handles all errors
+   gracefully with user-friendly messages.
+   ============================================ */
+
+/**
+ * Get the stored API key.
+ */
+function getApiKey() {
+  return localStorage.getItem("splitwise-apikey") || null;
+}
+
+/**
+ * Save the API key to localStorage.
+ */
+function saveApiKeyToStorage(key) {
+  localStorage.setItem("splitwise-apikey", key.trim());
+}
+
+/**
+ * Convert a File to base64, resizing if needed for reliable API processing.
+ * Mobile photos can be 5-12MB which may cause issues. We resize to max 1600px.
+ */
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        // Resize if larger than 1600px on any side
+        const MAX_SIZE = 1600;
+        let { width, height } = img;
+
+        if (width > MAX_SIZE || height > MAX_SIZE) {
+          const ratio = Math.min(MAX_SIZE / width, MAX_SIZE / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert to JPEG at good quality
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+        const base64 = dataUrl.split(",")[1];
+        resolve({ base64, mediaType: "image/jpeg" });
+      };
+      img.onerror = () => reject(new Error("FILE_READ_FAILED"));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error("FILE_READ_FAILED"));
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Send a bill image to Claude Vision and extract items.
+ *
+ * @param {string} base64     — Base64-encoded image data
+ * @param {string} mediaType  — MIME type (image/jpeg, image/png, etc.)
+ * @returns {Array<{name: string, price: number}>}
+ * @throws {Error} with code: NO_API_KEY | API_REQUEST_FAILED | PARSE_FAILED
+ */
+async function scanBillWithAI(base64, mediaType) {
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error("NO_API_KEY");
+
+  const prompt = `You are reading a restaurant bill/receipt image. This is likely from an Israeli restaurant, so prices are in NIS (₪) and item names may be in Hebrew, English, or mixed.
+
+YOUR TASK: Extract every food and drink item with its price.
+
+INCLUDE: All food items, drinks, appetizers, mains, desserts, sides, beverages, coffee, alcohol — anything a diner ordered.
+
+EXCLUDE: Tax (מע"מ), VAT, tip (טיפ), service charge (שירות), subtotal (סה"כ ביניים), total (סה"כ), discounts, table number, date, receipt number, restaurant name, address.
+
+IMPORTANT:
+- Read the image carefully, even if blurry or at an angle.
+- Keep item names EXACTLY as written on the bill.
+- Prices are numbers (not strings). Example: 45.00 not "45.00"
+- If a line shows quantity × price (e.g., "2 × 35"), create separate entries or one entry with the total.
+- Try your best even if parts are hard to read.
+
+Return ONLY a valid JSON array. No extra text, no explanation, no markdown fences.
+Example: [{"name":"המבורגר","price":62.00},{"name":"קולה","price":14.00}]
+
+If you truly cannot read ANYTHING in the image, return: []`;
+
+  let response;
+  try {
+    response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 2048,
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "image",
+                source: { type: "base64", media_type: mediaType, data: base64 },
+              },
+              { type: "text", text: prompt },
+            ],
+          },
+        ],
+      }),
+    });
+  } catch (networkErr) {
+    // Network error — likely CORS or no internet
+    console.error("Network error:", networkErr);
+    throw new Error("NETWORK_ERROR");
+  }
+
+  if (!response.ok) {
+    let errorDetail = "";
+    try { errorDetail = await response.text(); } catch {}
+    console.error("API error:", response.status, errorDetail);
+
+    if (response.status === 401) throw new Error("INVALID_API_KEY");
+    if (response.status === 403) throw new Error("FORBIDDEN");
+    if (response.status === 429) throw new Error("RATE_LIMITED");
+    if (response.status === 400) throw new Error("BAD_REQUEST");
+    throw new Error("API_ERROR_" + response.status);
+  }
+
+  const data = await response.json();
+  const textBlock = data.content?.find((b) => b.type === "text");
+  if (!textBlock?.text) throw new Error("PARSE_FAILED");
+
+  return parseItemsJSON(textBlock.text);
+}
+
+/**
+ * Safely parse an items JSON array from Claude's response.
+ * Handles markdown fences and extra text wrapping.
+ */
+function parseItemsJSON(raw) {
+  let text = raw.trim();
+
+  // Strip code fences
+  text = text.replace(/```(?:json)?\s*/gi, "").replace(/```\s*/g, "").trim();
+
+  // Find the JSON array
+  const match = text.match(/\[[\s\S]*\]/);
+  if (!match) throw new Error("PARSE_FAILED");
+
+  let items;
+  try {
+    items = JSON.parse(match[0]);
+  } catch {
+    throw new Error("PARSE_FAILED");
+  }
+
+  if (!Array.isArray(items)) throw new Error("PARSE_FAILED");
+
+  // Validate and sanitize each item
+  return items
+    .filter((i) =>
+      i &&
+      typeof i.name === "string" &&
+      i.name.trim() &&
+      typeof i.price === "number" &&
+      i.price > 0
+    )
+    .map((i) => ({
+      name: i.name.trim(),
+      price: Math.round(i.price * 100) / 100,
+    }));
+}
+
+/* ============================================
+   items.js — Item state & rendering
+   Manages bill items: add, remove, select,
+   split, and render to the DOM.
+   ============================================ */
+
+/* ---- State ---- */
+let billItems = [];
+let nextItemId = 1;
+
+/* ---- State Management ---- */
+
+/** Reset all items (for starting over). */
+function resetItems() {
+  billItems = [];
+  nextItemId = 1;
+}
+
+/** Load items from AI scan into state. */
+function loadScannedItems(apiItems) {
+  resetItems();
+  apiItems.forEach((item) => {
+    billItems.push({
+      id: nextItemId++,
+      name: item.name,
+      price: item.price,
+      selected: false,
+      splitBy: 1,
+    });
+  });
+}
+
+/** Add one item manually. Returns the new item. */
+function addManualItem(name, price) {
+  const item = {
+    id: nextItemId++,
+    name: name.trim(),
+    price: Math.round(price * 100) / 100,
+    selected: false,
+    splitBy: 1,
+  };
+  billItems.push(item);
+  return item;
+}
+
+/** Remove an item by ID. */
+function removeItem(id) {
+  billItems = billItems.filter((i) => i.id !== id);
+}
+
+/**
+ * Toggle item selection.
+ * - Not selected → select it.
+ * - Already selected → open split modal.
+ */
+function toggleItemSelection(id) {
+  const item = billItems.find((i) => i.id === id);
+  if (!item) return null;
+
+  if (item.selected) {
+    return { action: "split", item };
+  }
+
+  item.selected = true;
+  return { action: "selected", item };
+}
+
+/** Deselect an item and reset its split. */
+function deselectItem(id) {
+  const item = billItems.find((i) => i.id === id);
+  if (item) {
+    item.selected = false;
+    item.splitBy = 1;
+  }
+}
+
+/** Set the number of people splitting an item. */
+function setSplitCount(id, count) {
+  const item = billItems.find((i) => i.id === id);
+  if (item) item.splitBy = Math.max(1, count);
+}
+
+
+/* ---- Calculations ---- */
+
+/** What the user pays for a single item (price ÷ splitBy). */
+function getUserPrice(item) {
+  return item.price / item.splitBy;
+}
+
+/** Sum of the user's selected items (after splits). */
+function calculateSubtotal() {
+  return billItems
+    .filter((i) => i.selected)
+    .reduce((sum, i) => sum + getUserPrice(i), 0);
+}
+
+/** Sum of ALL items on the bill. */
+function calculateFullBillTotal() {
+  return billItems.reduce((sum, i) => sum + i.price, 0);
+}
+
+/** Get only selected items. */
+function getSelectedItems() {
+  return billItems.filter((i) => i.selected);
+}
+
+
+/* ---- Formatting ---- */
+
+/** Format a number as ₪XX.XX */
+function formatPrice(amount) {
+  return `₪${amount.toFixed(2)}`;
+}
+
+
+/* ---- DOM Rendering ---- */
+
+/** Render the full items list into #itemsList. */
+function renderItems() {
+  const container = document.getElementById("itemsList");
+  if (!container) return;
+  container.innerHTML = "";
+
+  billItems.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = `item-row${item.selected ? " selected" : ""}`;
+    row.style.animationDelay = `${index * 35}ms`;
+    row.dataset.itemId = item.id;
+
+    // Checkmark circle
+    const check = document.createElement("div");
+    check.className = "item-check";
+    check.innerHTML = `<svg class="item-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+    // Item info
+    const info = document.createElement("div");
+    info.className = "item-info";
+
+    const nameEl = document.createElement("div");
+    nameEl.className = "item-name";
+    nameEl.textContent = item.name;
+    info.appendChild(nameEl);
+
+    // Split badge
+    if (item.selected && item.splitBy > 1) {
+      const badge = document.createElement("div");
+      badge.className = "split-badge";
+      badge.textContent = t("splitBy", { n: item.splitBy });
+      info.appendChild(badge);
+    }
+
+    // Price
+    const price = document.createElement("div");
+    const isSplit = item.selected && item.splitBy > 1;
+    price.className = `item-price${isSplit ? " split-price" : ""}`;
+    price.textContent = isSplit
+      ? formatPrice(getUserPrice(item))
+      : formatPrice(item.price);
+
+    // Delete button
+    const del = document.createElement("button");
+    del.className = "item-delete";
+    del.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+    del.setAttribute("aria-label", "Remove");
+    del.addEventListener("click", (e) => {
+      e.stopPropagation();
+      removeItem(item.id);
+      renderItems();
+      updateRunningSubtotal();
+    });
+
+    // Assemble
+    row.appendChild(check);
+    row.appendChild(info);
+    row.appendChild(price);
+    row.appendChild(del);
+
+    // Selection / split handler
+    row.addEventListener("click", () => {
+      const result = toggleItemSelection(item.id);
+      if (!result) return;
+      if (result.action === "split") {
+        openSplitModal(result.item);
+      } else {
+        renderItems();
+        updateRunningSubtotal();
+      }
+    });
+
+    container.appendChild(row);
+  });
+
+  updateRunningSubtotal();
+}
+
+/** Update the running subtotal display. */
+function updateRunningSubtotal() {
+  const el = document.getElementById("runningSubtotal");
+  if (el) el.textContent = formatPrice(calculateSubtotal());
+}
+
+/* ============================================
+   app.js — Main application controller
+   Step navigation, tip calculation, summary,
+   modal, toast system, event binding.
+   ============================================ */
+
+/* -------- State -------- */
+let currentStep = 1;
+let tipPercent = 18;
+let capturedFile = null;
+let capturedBase64 = null;
+let capturedMediaType = null;
+
+
+/* ======================================
+   INITIALIZATION
+   ====================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+  initI18n();
+
+  // Restore saved API key
+  const savedKey = getApiKey();
+  if (savedKey) {
+    document.getElementById("apiKeyInput").value = savedKey;
+    document.getElementById("keyStatus").textContent = "✓";
+  }
+
+  // Bind all interactions
+  bindStep1Events();
+  bindStep2Events();
+  bindStep3Events();
+  bindStep4Events();
+  bindModalEvents();
+  bindNavigation();
+
+  document.getElementById("langToggle").addEventListener("click", switchLanguage);
+});
+
+
+/* ======================================
+   STEP NAVIGATION
+   ====================================== */
+
+function goToStep(step) {
+  currentStep = step;
+
+  // Toggle step visibility
+  document.querySelectorAll(".step").forEach((el) => {
+    el.classList.toggle("active", +el.dataset.step === step);
+  });
+
+  // Progress bar
+  document.getElementById("progressFill").style.width = `${step * 25}%`;
+
+  // Progress dots
+  document.querySelectorAll(".progress-dot").forEach((dot) => {
+    const s = +dot.dataset.step;
+    dot.classList.toggle("active", s === step);
+    dot.classList.toggle("completed", s < step);
+  });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/** Bind back buttons and progress dot taps. */
+function bindNavigation() {
+  // Back buttons
+  document.querySelectorAll("[data-go-step]").forEach((btn) => {
+    btn.addEventListener("click", () => goToStep(+btn.dataset.goStep));
+  });
+
+  // Progress dots — only allow going backwards
+  document.querySelectorAll(".progress-dot").forEach((dot) => {
+    dot.addEventListener("click", () => {
+      const target = +dot.dataset.step;
+      if (target <= currentStep) goToStep(target);
+    });
+  });
+}
+
+
+/* ======================================
+   STEP 1 — UPLOAD / CAPTURE
+   ====================================== */
+
+function bindStep1Events() {
+  const cameraInput = document.getElementById("cameraInput");
+  const galleryInput = document.getElementById("galleryInput");
+  const scanBtn = document.getElementById("scanBtn");
+
+  // Camera button → opens camera
+  document.getElementById("cameraBtn").addEventListener("click", () => {
+    cameraInput.click();
+  });
+
+  // Gallery button → opens photo picker
+  document.getElementById("galleryBtn").addEventListener("click", () => {
+    galleryInput.click();
+  });
+
+  // Handle file from camera
+  cameraInput.addEventListener("change", () => {
+    if (cameraInput.files.length) handleFileSelected(cameraInput.files[0]);
+  });
+
+  // Handle file from gallery
+  galleryInput.addEventListener("change", () => {
+    if (galleryInput.files.length) handleFileSelected(galleryInput.files[0]);
+  });
+
+  // Remove image
+  document.getElementById("removeImage").addEventListener("click", clearCapturedImage);
+
+  // Scan
+  scanBtn.addEventListener("click", handleScanBill);
+
+  // Manual entry shortcut
+  document.getElementById("manualEntryBtn").addEventListener("click", () => {
+    resetItems();
+    renderItems();
+    goToStep(2);
+  });
+
+  // Save API key
+  document.getElementById("saveApiKey").addEventListener("click", () => {
+    const key = document.getElementById("apiKeyInput").value.trim();
+    if (key) {
+      saveApiKeyToStorage(key);
+      document.getElementById("keyStatus").textContent = "✓";
+      showToast(t("keySaved"), "success");
+    }
+  });
+}
+
+async function handleFileSelected(file) {
+  capturedFile = file;
+
+  const preview = document.getElementById("previewContainer");
+  const img = document.getElementById("previewImage");
+  const buttons = document.querySelector(".upload-buttons");
+
+  img.src = URL.createObjectURL(file);
+  preview.classList.remove("hidden");
+  buttons.classList.add("hidden");
+  document.getElementById("scanBtn").disabled = false;
+
+  try {
+    const result = await fileToBase64(file);
+    capturedBase64 = result.base64;
+    capturedMediaType = result.mediaType;
+  } catch {
+    showToast(t("errorScanFailed"), "error");
+  }
+}
+
+function clearCapturedImage() {
+  capturedFile = null;
+  capturedBase64 = null;
+  capturedMediaType = null;
+
+  document.getElementById("previewContainer").classList.add("hidden");
+  document.querySelector(".upload-buttons").classList.remove("hidden");
+  document.getElementById("scanBtn").disabled = true;
+  document.getElementById("cameraInput").value = "";
+  document.getElementById("galleryInput").value = "";
+}
+
+async function handleScanBill() {
+  if (!getApiKey()) {
+    showToast(t("errorApiKey"), "error");
+    return;
+  }
+  if (!capturedBase64) {
+    showToast(t("errorNoImage"), "error");
+    return;
+  }
+
+  const overlay = document.getElementById("scanningOverlay");
+  overlay.classList.remove("hidden");
+
+  try {
+    const items = await scanBillWithAI(capturedBase64, capturedMediaType);
+
+    if (items.length === 0) {
+      showToast(t("errorEmptyBill"), "error");
+      resetItems();
+      renderItems();
+      goToStep(2);
+    } else {
+      loadScannedItems(items);
+      renderItems();
+      goToStep(2);
+      showToast(t("scanSuccess", { count: items.length }), "success");
+    }
+  } catch (err) {
+    console.error("Scan error:", err);
+
+    const errorMap = {
+      "NO_API_KEY": "errorApiKey",
+      "INVALID_API_KEY": "errorInvalidKey",
+      "FORBIDDEN": "errorForbidden",
+      "RATE_LIMITED": "errorRateLimit",
+      "NETWORK_ERROR": "errorNetwork",
+      "PARSE_FAILED": "errorParseFailed",
+    };
+
+    const toastKey = errorMap[err.message] || "errorScanFailed";
+    showToast(t(toastKey), "error");
+
+    // On parse failure, go to step 2 for manual entry
+    if (err.message === "PARSE_FAILED") {
+      resetItems();
+      renderItems();
+      goToStep(2);
+    }
+  } finally {
+    overlay.classList.add("hidden");
+  }
+}
+
+
+/* ======================================
+   STEP 2 — SELECT ITEMS
+   ====================================== */
+
+function bindStep2Events() {
+  const addBtn = document.getElementById("addItemBtn");
+
+  addBtn.addEventListener("click", handleAddManualItem);
+
+  // Enter key handling
+  document.getElementById("manualPrice").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleAddManualItem();
+  });
+  document.getElementById("manualName").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("manualPrice").focus();
+  });
+
+  document.getElementById("toStep3").addEventListener("click", () => {
+    if (getSelectedItems().length === 0) {
+      showToast(t("noItemsSelected"), "error");
+      return;
+    }
+    updateTipPreview();
+    goToStep(3);
+  });
+}
+
+function handleAddManualItem() {
+  const nameEl = document.getElementById("manualName");
+  const priceEl = document.getElementById("manualPrice");
+  const name = nameEl.value.trim();
+  const price = parseFloat(priceEl.value);
+
+  if (!name || isNaN(price) || price <= 0) return;
+
+  addManualItem(name, price);
+  renderItems();
+  showToast(t("itemAdded"), "info");
+
+  nameEl.value = "";
+  priceEl.value = "";
+  nameEl.focus();
+}
+
+
+/* ======================================
+   STEP 3 — TIP
+   ====================================== */
+
+function bindStep3Events() {
+  // Preset tip buttons
+  document.querySelectorAll(".tip-chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      tipPercent = +chip.dataset.tip;
+      document.getElementById("customTipInput").value = "";
+
+      document.querySelectorAll(".tip-chip").forEach((c) => c.classList.remove("active"));
+      chip.classList.add("active");
+
+      updateTipPreview();
+    });
+  });
+
+  // Custom tip
+  document.getElementById("customTipInput").addEventListener("input", (e) => {
+    const val = parseFloat(e.target.value);
+    if (!isNaN(val) && val >= 0) {
+      tipPercent = Math.min(val, 100);
+      document.querySelectorAll(".tip-chip").forEach((c) => c.classList.remove("active"));
+      updateTipPreview();
+    }
+  });
+
+  document.getElementById("toStep4").addEventListener("click", () => {
+    renderSummary();
+    goToStep(4);
+  });
+}
+
+function updateTipPreview() {
+  const sub = calculateSubtotal();
+  const tip = sub * (tipPercent / 100);
+  const total = sub + tip;
+
+  document.getElementById("tipPreviewSubtotal").textContent = formatPrice(sub);
+  document.getElementById("tipPreviewTip").textContent = formatPrice(tip);
+  document.getElementById("tipPreviewTotal").textContent = formatPrice(total);
+}
+
+
+/* ======================================
+   STEP 4 — SUMMARY
+   ====================================== */
+
+function bindStep4Events() {
+  document.getElementById("startOver").addEventListener("click", handleStartOver);
+}
+
+function renderSummary() {
+  const selected = getSelectedItems();
+  const subtotal = calculateSubtotal();
+  const tipAmount = subtotal * (tipPercent / 100);
+  const total = subtotal + tipAmount;
+  const fullBill = calculateFullBillTotal();
+  const pct = fullBill > 0 ? ((subtotal / fullBill) * 100).toFixed(1) : "0.0";
+
+  // Render items with staggered animation
+  const container = document.getElementById("summaryItems");
+  container.innerHTML = "";
+
+  selected.forEach((item, i) => {
+    const row = document.createElement("div");
+    row.className = "receipt-item-row";
+    row.style.animationDelay = `${i * 50 + 200}ms`;
+
+    let label = item.name;
+    if (item.splitBy > 1) label += ` (÷${item.splitBy})`;
+
+    row.innerHTML = `
+      <span class="receipt-item-name">${label}</span>
+      <span class="mono">${formatPrice(getUserPrice(item))}</span>
+    `;
+    container.appendChild(row);
+  });
+
+  // Totals
+  document.getElementById("summarySubtotal").textContent = formatPrice(subtotal);
+  document.getElementById("summaryTipLabel").textContent = t("tipLabel", { pct: tipPercent });
+  document.getElementById("summaryTip").textContent = formatPrice(tipAmount);
+  document.getElementById("summaryTotal").textContent = formatPrice(total);
+  document.getElementById("summaryPercent").textContent = `${pct}%`;
+}
+
+function handleStartOver() {
+  resetItems();
+  clearCapturedImage();
+  tipPercent = 18;
+  document.getElementById("customTipInput").value = "";
+
+  document.querySelectorAll(".tip-chip").forEach((c) => {
+    c.classList.toggle("active", +c.dataset.tip === 18);
+  });
+
+  goToStep(1);
+}
+
+
+/* ======================================
+   SPLIT MODAL
+   ====================================== */
+
+let splitModalItemId = null;
+let splitModalCount = 2;
+
+function bindModalEvents() {
+  const minus = document.getElementById("splitMinus");
+  const plus = document.getElementById("splitPlus");
+  const confirm = document.getElementById("splitConfirm");
+  const cancel = document.getElementById("splitCancel");
+  const close = document.getElementById("splitClose");
+  const overlay = document.getElementById("splitModal");
+
+  minus.addEventListener("click", () => {
+    if (splitModalCount > 1) { splitModalCount--; updateSplitModal(); }
+  });
+
+  plus.addEventListener("click", () => {
+    if (splitModalCount < 20) { splitModalCount++; updateSplitModal(); }
+  });
+
+  confirm.addEventListener("click", () => {
+    if (splitModalItemId !== null) {
+      setSplitCount(splitModalItemId, splitModalCount);
+      closeSplitModal();
+      renderItems();
+      updateRunningSubtotal();
+    }
+  });
+
+  const cancelAction = () => {
+    if (splitModalItemId !== null) deselectItem(splitModalItemId);
+    closeSplitModal();
+    renderItems();
+    updateRunningSubtotal();
+  };
+
+  cancel.addEventListener("click", cancelAction);
+  close.addEventListener("click", cancelAction);
+
+  // Close on backdrop click
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) cancelAction();
+  });
+}
+
+function openSplitModal(item) {
+  splitModalItemId = item.id;
+  splitModalCount = item.splitBy > 1 ? item.splitBy : 2;
+
+  document.getElementById("splitItemName").textContent = item.name;
+  document.getElementById("splitItemPrice").textContent = formatPrice(item.price);
+
+  updateSplitModal();
+  document.getElementById("splitModal").classList.remove("hidden");
+}
+
+function updateSplitModal() {
+  document.getElementById("splitCount").textContent = splitModalCount;
+  const item = billItems.find((i) => i.id === splitModalItemId);
+  if (item) {
+    document.getElementById("splitResult").textContent =
+      formatPrice(item.price / splitModalCount);
+  }
+}
+
+function closeSplitModal() {
+  document.getElementById("splitModal").classList.add("hidden");
+  splitModalItemId = null;
+}
+
+
+/* ======================================
+   TOAST NOTIFICATION SYSTEM
+   ====================================== */
+
+/**
+ * Show a toast message.
+ * @param {string} message — Text to display
+ * @param {"success"|"error"|"info"} type
+ * @param {number} duration — Milliseconds before auto-dismiss
+ */
+function showToast(message, type = "info", duration = 3000) {
+  const container = document.getElementById("toastContainer");
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("exiting");
+    toast.addEventListener("animationend", () => toast.remove());
+  }, duration);
+}
+</script>
+</body>
+</html>
